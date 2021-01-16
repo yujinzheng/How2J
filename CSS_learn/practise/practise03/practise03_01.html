@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <style>
+            a {
+                font-family: 微软雅黑;
+                font-size: 13px;
+            }
+            div#main {
+                width: 610px;
+                margin: 35px auto;
+                font-family: 微软雅黑;
+                font-size: 13px;
+            }
+            div#form {
+                width: 610px;
+                height: 480px;
+                border-style: solid;
+                border-width: 2px;
+                border-color: #add8e6;
+            }
+            div#input_info {
+                margin-left: 5px;
+            }
+            div.form_title {
+                font-size: 15px;
+                color: #4682b4;
+                font-weight: bold;
+                background-color: #add8e6;
+                margin: 2px;
+            }
+            .normal {
+                font-family: 微软雅黑;
+                font-size: 13px;
+            }
+            .red {
+                color: red;
+                vertical-align: middle;
+            }
+            table.input {
+                width: auto;
+                table-layout: fixed;
+                word-wrap: break-word;
+                word-break: break-all;
+                margin-left: 5px;
+                border-bottom-width: 2px;
+                border-bottom-style: solid;
+                border-bottom-color: #e0ffff;
+            }
+            td.input_name {
+                width: 115px;
+            }
+            td.input {
+                width: 135px;
+            }
+            td.input_info {
+                background-color: #f5f5f5;
+            }
+            input.input {
+                background-color: #f8f8ff;
+                width: 128px;
+                margin-bottom: 2px;
+            }
+        </style>
+        <div id="main">
+            <span class="red">请注意：带有“*”的项目必须填写</span>
+            <div id="form">
+                <div class="form_title">
+                    填写您的用户名：
+                </div>
+                <table class="input" style="height: 85px;">
+                    <tr>
+                        <td class="input_name"><span class="red">*</span><span class="normal">通行证用户名：</span></td>
+                        <td class="input"><input class="input" type="text" placeholder="请输入用户名"><br>
+                        <a href="#">查看用户名是否被占用</a>
+                        </td>
+                        <td class="input_info"><div id="input_info" class="normal">用户名由a~z的英文字母（不区分大小写）、0~9的数字、<strong>点、减号</strong>或<strong>下划线</strong>组成，长度为3~18个字符，只能以数字或者字母开头和结尾，例如：kyzy_001.</div></td>
+                    </tr>
+                </table>
+                <div class="form_title">
+                    请填写安全设置：
+                    <span style="font-size: 13px;font-weight: normal;">（安全设置用于验证帐号和找回密码）</span>
+                </div>
+                <div class="red" style="margin-top: 5px;">以下信息对保证您帐号的安全极为重要，请您务必认真填写.</div>
+                <table class="input" style="height: 90px;">
+                    <tr>
+                        <td class="input_name">
+                            <span class="red">*</span><span class="normal">输入登录密码：</span><br>
+                            <span class="red">*</span><span class="normal">登录密码确认：</span>
+                        </td>
+                        <td class="input">
+                            <input class="input" type="password">
+                            <input class="input" type="password">
+                        </td>
+                        <td class="input_info">
+                            <div id="input_info" class="normal">密码长度为6~16位，区分字母大小写，登录密码可以由字母、数字、特殊字符组成.【<a href="#">更多说明</a>】</div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="input" style="height: 90px;">
+                    <tr>
+                        <td class="input_name">
+                            <span class="red">*</span><span class="normal">密码提示问题：</span><br>
+                            <span class="red">*</span><span class="normal">密码提示答案：</span>
+                        </td>
+                        <td class="input">
+                            <input class="input" type="text">
+                            <input class="input" type="text">
+                        </td>
+                        <td class="input_info">
+                            <div id="input_info" class="normal">当您忘记密码时可以由找回密码.例如，问题是“我的哥哥是谁”，答案为“peter2”.问题长度<strong>不大于36</strong>个字符，一个汉子占两个字符，答案长度在6~30位之间，区分大小写.【<a href="#">更多说明</a>】</div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="input" style="height: 90px;">
+                    <tr>
+                        <td class="input_name">
+                            <span class="red">*</span><span class="normal">输入安全码：</span><br>
+                            <span class="red">*</span><span class="normal">安全码确认：</span>
+                        </td>
+                        <td class="input">
+                            <input class="input" type="password">
+                            <input class="input" type="password">
+                        </td>
+                        <td class="input_info">
+                            <div id="input_info" class="normal">安全码时您找回密码的重要途径，安全码长度为6~16位，区分字母大小写，由字母，数字特殊字符组成.<span class="red" style="vertical-align: top;">特别提醒：安全码一旦设定，将不可自行修改.</span>【<a href="#">更多说明</a>】</div>
+                        </td>
+                    </tr>
+                </table>
+                <div style="text-align: center;">
+                    <input type="button" value="提交表单" style="margin-top: 10px;width: 120px;letter-spacing: 5px;">
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
