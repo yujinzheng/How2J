@@ -1,0 +1,37 @@
+{
+  "id": "2729740",
+  "name": "tmall-icon",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-tmall",
+  "description": "天猫图标库",
+  "glyphs": [
+    {
+      "icon_id": "8189901",
+      "name": "tmall",
+      "font_class": "tmall",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "9257877",
+      "name": "天猫 tmall-logo",
+      "font_class": "tianmaotmall-logo",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "49355",
+      "name": "天猫购物车 ",
+      "font_class": "gouwuche2",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "160002",
+      "name": "home2",
+      "font_class": "home2",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}
