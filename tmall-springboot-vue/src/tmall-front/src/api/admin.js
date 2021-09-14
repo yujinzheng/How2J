@@ -24,12 +24,9 @@ axios.interceptors.response.use(response => {
 })
 
 function getCategoryList() {
-    return new Promise((resolve, reject) => {
-        axios.get(getCategoryListUrl).then((data) => {
-            resolve(data)
-        }).catch(err => {
-            reject(err);
-        })
+    return axios({
+        url: getCategoryListUrl,
+        method: 'GET'
     })
 }
 

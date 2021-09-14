@@ -12,5 +12,6 @@ import lombok.Setter;
 @Setter
 public class Category {
     private int categoryId;
+    private String imagePath;
     private String name;
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="admin-content">
     <el-tag size="small" effect="dark">分类管理</el-tag>
-    <el-table :data="categoryList" border style="width: 100%" header-cell-style="">
+    <el-table :data="categoryList" border style="width: 100%">
       <el-table-column label="分类ID" width="90" prop="categoryId">
       </el-table-column>
-      <el-table-column label="图片">
+      <el-table-column label="图片" prop="imagePath">
 
       </el-table-column>
       <el-table-column label="分类名称" width="180" prop="name">
@@ -21,7 +21,7 @@
           >编辑</el-button
           >
           <el-button
-              size="mini"
+              size="mini "
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button
@@ -57,32 +57,35 @@
 </template>
 
 <script>
+import { reactive, ref } from '@vue/reactivity';
 import {getCategoryList} from "../../api/admin";
+import { onMounted } from '@vue/runtime-core';
 
 export default {
   name: "CategoryManagement",
-  mounted() {
-    this.getCategoryList();
-  },
-  data() {
+  setup() {
+    let categoryList = reactive([]);
+    const getCategories = () => {
+      getCategoryList().then((response) => {
+        categoryList.push(...response)
+      })
+    };
+    onMounted(() => {
+      getCategories();
+    });
+    const handleEdit = (index, row) => {
+      console.log(index, row)
+    };
+    const handleDelete = (index, row) => {
+      console.log(index, row)
+    };
     return {
-      categoryList: []
+      categoryList,
+      getCategories,
+      handleEdit,
+      handleDelete
     }
-  },
-  methods: {
-    async getCategoryList() {
-      let res = await getCategoryList();
-      if (res !== null) {
-        this.categoryList = res;
-      }
-    },
-    handleEdit(index, row) {
-      console.log(index, row)
-    },
-    handleDelete(index, row) {
-      console.log(index, row)
-    },
-  },
+  }
 }
 </script>
 
