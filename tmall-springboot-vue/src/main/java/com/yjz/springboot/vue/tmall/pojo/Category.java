@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @description: category实体类
- * @author: YU
- * @create: 2021-09-07 03:43
+ * category实体类
+ * @author YU
+ * @create 2021-09-07 03:43
  **/
 @Getter
 @Setter

@@ -1,18 +1,26 @@
+
 package com.yjz.springboot.vue.tmall.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.yjz.springboot.vue.tmall.entity.response.BaseResponse;
+import com.yjz.springboot.vue.tmall.entity.response.DataResponse;
 import com.yjz.springboot.vue.tmall.pojo.Category;
 import com.yjz.springboot.vue.tmall.service.CategoryService;
+import com.yjz.springboot.vue.tmall.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
- * @description:
- * @author: YU
- * @create: 2021-09-07 03:59
+ * 管理页面controller
+ * 
+ * @author YU
+ * @create 2021-09-07 03:59
  **/
 @RestController
 @RequestMapping("/tmall-vue/admin")
@@ -21,8 +29,12 @@ public class AdminController {
     private CategoryService categoryService;
 
     @RequestMapping("/category/list")
-    public List<Category> findAll() {
-        return categoryService.findAll();
+    public BaseResponse findAll(@RequestParam(value = "start", defaultValue = "1") int start,
+                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+        DataResponse response = (DataResponse)ResponseUtils.dataSuccess("");
+        PageHelper.startPage(start, size);
+        categoryService.findAll(response);
+        return response;
     }
 
     @RequestMapping("/category/add")

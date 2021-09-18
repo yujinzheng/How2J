@@ -23,9 +23,9 @@ axios.interceptors.response.use(response => {
     return Promise.reject(error);
 })
 
-function getCategoryList() {
+function getCategoryList(currentPage, pageSize) {
     return axios({
-        url: getCategoryListUrl,
+        url: getCategoryListUrl + '?start=' + currentPage + '&size=' + pageSize,
         method: 'GET'
     })
 }

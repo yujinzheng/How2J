@@ -1,7 +1,7 @@
 <template>
   <div class="admin-content">
     <el-tag size="small" effect="dark">分类管理</el-tag>
-    <el-table :data="categoryList" border style="width: 100%">
+    <el-table :data="categoryData.categoryList" border style="width: 100%">
       <el-table-column label="分类ID" width="90" prop="categoryId">
       </el-table-column>
       <el-table-column label="图片" prop="imagePath">
@@ -21,7 +21,7 @@
           >编辑</el-button
           >
           <el-button
-              size="mini "
+              size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button
@@ -30,8 +30,16 @@
       </el-table-column>
     </el-table>
     <div class="pages">
-      <el-pagination background layout="prev, pager, next" :total="200">
-      </el-pagination>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pageInfo.currentPage"
+      :page-sizes="pageInfo.pageSizes"
+      :page-size="pageInfo.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pageInfo.total"
+    >
+    </el-pagination>
     </div>
 
     <div class="addCategory">
@@ -59,19 +67,43 @@
 <script>
 import { reactive, ref } from '@vue/reactivity';
 import {getCategoryList} from "../../api/admin";
-import { onMounted } from '@vue/runtime-core';
+import { onMounted, onUpdated } from '@vue/runtime-core';
+import { ElMessage } from 'element-plus'
 
 export default {
   name: "CategoryManagement",
   setup() {
-    let categoryList = reactive([]);
+    let categoryData = reactive({
+      'categoryList': []
+    });
+    let pageInfo = reactive({
+      'total': 0,
+      'currentPage': 1,
+      'pageSize': 10,
+      'pageSizes': [10, 50, 100]
+    });
     const getCategories = () => {
-      getCategoryList().then((response) => {
-        categoryList.push(...response)
+      getCategoryList(pageInfo.currentPage, pageInfo.pageSize).then((response) => {
+        if(response.code !== "0000000") {
+          ElMessage.error(response.decs)
+          return;
+        }
+        const data = JSON.parse(response.data);
+        pageInfo.total = data.total;
+        pageInfo.currentPage = data.currentPage;
+        categoryData.categoryList = data.categoryList
       })
     };
+    const handleSizeChange = (val) => {
+      pageInfo.pageSize=val;
+      getCategories(pageInfo.currentPage, pageInfo.pageSize);
+    };
+    const handleCurrentChange = (val) => {
+      pageInfo.currentPage = val;
+      getCategories(pageInfo.currentPage, pageInfo.pageSize);
+    };
     onMounted(() => {
-      getCategories();
+      getCategories(pageInfo.currentPage, pageInfo.pageSize);
     });
     const handleEdit = (index, row) => {
       console.log(index, row)
@@ -80,10 +112,13 @@ export default {
       console.log(index, row)
     };
     return {
-      categoryList,
+      categoryData,
       getCategories,
       handleEdit,
-      handleDelete
+      handleDelete,
+      pageInfo,
+      handleSizeChange,
+      handleCurrentChange
     }
   }
 }
