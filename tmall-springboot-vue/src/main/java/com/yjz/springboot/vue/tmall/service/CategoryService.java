@@ -14,5 +14,7 @@ import java.util.List;
 public interface CategoryService {
     DataResponse findAll(DataResponse response);
 
-    void addOne(Category category);
+    BaseResponse addOne(Category category);
+
+    BaseResponse deleteOne(Category category);
 }

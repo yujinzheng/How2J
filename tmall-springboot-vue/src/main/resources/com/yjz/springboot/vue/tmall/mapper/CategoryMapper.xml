@@ -8,4 +8,8 @@
     <insert id="addOne" useGeneratedKeys="true" parameterType="com.yjz.springboot.vue.tmall.pojo.Category">
         insert into category(categoryId, name) values (#{categoryId}, #{name})
     </insert>
+
+    <delete id="deleteOne" parameterType="Integer">
+        delete from category where categoryId = #{categoryId}
+    </delete>
 </mapper>

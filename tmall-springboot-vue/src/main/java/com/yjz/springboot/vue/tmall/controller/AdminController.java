@@ -38,7 +38,12 @@ public class AdminController {
     }
 
     @RequestMapping("/category/add")
-    public void addOne(@RequestBody Category category) {
-        categoryService.addOne(category);
+    public BaseResponse addOne(@RequestBody Category category) {
+        return categoryService.addOne(category);
+    }
+
+    @RequestMapping("/category/delete")
+    public BaseResponse deleteOne(@RequestBody Category category) {
+        return categoryService.deleteOne(category);
     }
 }

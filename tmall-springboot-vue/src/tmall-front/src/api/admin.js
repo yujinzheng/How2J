@@ -2,6 +2,7 @@ import axios from "axios";
 
 const getCategoryListUrl = '/tmall-vue/admin/category/list'
 const addCategoryUrl = '/tmall-vue/admin/category/add'
+const deleteCategoryUrl = '/tmall-vue/admin/category/delete'
 
 // 添加一个拦截器，回调函数会在发出请求时执行
 // config: 请求配置
@@ -31,17 +32,18 @@ function getCategoryList(currentPage, pageSize) {
 }
 
 function addCategory(data={}) {
-    return new Promise((resolve, reject) => {
-        axios({
-            method: 'post',
-            addCategoryUrl,
-            data
-        }).then(data => {
-            resolve(data)
-        }).catch(err => {
-            reject(err);
-        })
+    return axios({
+        url: addCategoryUrl,
+        method: 'POST'
     })
 }
 
-export {getCategoryList, addCategory}
+function deleteCategory(data={}) {
+    return axios({
+        url: deleteCategoryUrl,
+        method: 'DELETE',
+        data
+    })
+}
+
+export {getCategoryList, addCategory, deleteCategory}

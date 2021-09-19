@@ -9,6 +9,7 @@ import com.yjz.springboot.vue.tmall.mapper.CategoryMapper;
 import com.yjz.springboot.vue.tmall.pojo.Category;
 import com.yjz.springboot.vue.tmall.service.CategoryService;
 
+import com.yjz.springboot.vue.tmall.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,13 @@ public class CategoryServiceImpl implements CategoryService {
         return response;
     }
 
-    public void addOne(Category category) {
+    public BaseResponse addOne(Category category) {
         categoryMapper.addOne(category);
+        return ResponseUtils.success();
+    }
+
+    public BaseResponse deleteOne(Category category) {
+        categoryMapper.deleteOne(category.getCategoryId());
+        return ResponseUtils.success();
     }
 }

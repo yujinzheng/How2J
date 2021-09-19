@@ -10,21 +10,27 @@
       <el-table-column label="分类名称" width="180" prop="name">
       </el-table-column>
       <el-table-column label="属性管理" width="90">
-        <span>测试8</span>
+          <el-button size="mini" icon="el-icon-s-operation" type="primary"
+          ></el-button>
       </el-table-column>
       <el-table-column label="产品管理" width="90">
-        <span>测试8</span>
+          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)"
+          icon="el-icon-shopping-cart-2"
+          ></el-button
+          >
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button
+          <el-button size="mini" type="primary" @click="handleEdit(scope.row)"
+          icon="el-icon-edit"
+          ></el-button
           >
           <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button
+              @click="handleDelete(scope.row)"
+              icon="el-icon-delete">
+      </el-button
           >
         </template>
       </el-table-column>
@@ -65,13 +71,17 @@
 </template>
 
 <script>
-import { reactive, ref } from '@vue/reactivity';
-import {getCategoryList} from "../../api/admin";
-import { onMounted, onUpdated } from '@vue/runtime-core';
-import { ElMessage } from 'element-plus'
+import { reactive } from '@vue/reactivity';
+import { getCategoryList, deleteCategory } from "../../api/admin";
+import { onMounted } from '@vue/runtime-core';
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Edit } from '@element-plus/icons'
 
 export default {
   name: "CategoryManagement",
+  components: {
+    Edit
+  },
   setup() {
     let categoryData = reactive({
       'categoryList': []
@@ -108,8 +118,27 @@ export default {
     const handleEdit = (index, row) => {
       console.log(index, row)
     };
-    const handleDelete = (index, row) => {
-      console.log(index, row)
+    const handleDelete = (row) => {
+      ElMessageBox.confirm('此操作将删除该分类, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        })
+          .then(() => {
+            deleteCategory(row);
+            handleCurrentChange(pageInfo.currentPage);
+            ElMessage({
+              type: 'success',
+              message: '删除成功!',
+            });
+          })
+          .catch(() => {
+            ElMessage({
+              type: 'info',
+              message: '已取消删除',
+            });
+          });
+
     };
     return {
       categoryData,
