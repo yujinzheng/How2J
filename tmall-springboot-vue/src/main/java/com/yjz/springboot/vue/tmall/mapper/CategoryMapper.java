@@ -15,9 +15,11 @@ import java.util.List;
 @Mapper
 @Repository
 public interface CategoryMapper {
-    public List<Category> findAll();
+    public List<Category> findAllCategory();
 
-    public void deleteOne(int categoryId);
+    public void deleteCategory(int id);
 
-    public void addOne(Category category);
+    public void addCategory(Category category);
+
+    public void updateCategory(Category category);
 }

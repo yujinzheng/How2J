@@ -1,4 +1,5 @@
 import axios from "axios";
+import da from "element-plus/packages/locale/lang/da";
 
 const getCategoryListUrl = '/tmall-vue/admin/category/list'
 const addCategoryUrl = '/tmall-vue/admin/category/add'
@@ -24,21 +25,27 @@ axios.interceptors.response.use(response => {
     return Promise.reject(error);
 })
 
-function getCategoryList(currentPage, pageSize) {
+function categoryListGet(currentPage, pageSize) {
     return axios({
         url: getCategoryListUrl + '?start=' + currentPage + '&size=' + pageSize,
         method: 'GET'
     })
 }
 
-function addCategory(data={}) {
+function categoryAdd(data={}) {
+    const requestData = new FormData()
+    requestData.append('name', data.name)
     return axios({
         url: addCategoryUrl,
-        method: 'POST'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: requestData
     })
 }
 
-function deleteCategory(data={}) {
+function categoryDelete(data={}) {
     return axios({
         url: deleteCategoryUrl,
         method: 'DELETE',
@@ -46,4 +53,4 @@ function deleteCategory(data={}) {
     })
 }
 
-export {getCategoryList, addCategory, deleteCategory}
+export {categoryListGet, categoryAdd, categoryDelete}

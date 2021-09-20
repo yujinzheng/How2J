@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.yjz.springboot.vue.tmall.mapper.CategoryMapper">
-    <select id="findAll" resultType="com.yjz.springboot.vue.tmall.pojo.Category">
+    <select id="findAllCategory" resultType="com.yjz.springboot.vue.tmall.pojo.Category">
         SELECT * FROM category
     </select>
 
-    <insert id="addOne" useGeneratedKeys="true" parameterType="com.yjz.springboot.vue.tmall.pojo.Category">
-        insert into category(categoryId, name) values (#{categoryId}, #{name})
+    <insert id="addCategory" useGeneratedKeys="true" parameterType="com.yjz.springboot.vue.tmall.pojo.Category"
+            keyProperty="id">
+        insert into category(name) values ( #{name})
     </insert>
 
-    <delete id="deleteOne" parameterType="Integer">
-        delete from category where categoryId = #{categoryId}
+    <delete id="deleteCategory" parameterType="Integer">
+        delete from category where id = #{id}
     </delete>
+
+    <update id="updateCategory" parameterType="com.yjz.springboot.vue.tmall.pojo.Category">
+        update category set imagePath=#{imagePath},name=#{name} where id=#{id}
+    </update>
 </mapper>

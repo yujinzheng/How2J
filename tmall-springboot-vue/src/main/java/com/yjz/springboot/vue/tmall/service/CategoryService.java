@@ -1,9 +1,12 @@
 package com.yjz.springboot.vue.tmall.service;
 
+import com.yjz.springboot.vue.tmall.entity.request.CategoryRequest;
 import com.yjz.springboot.vue.tmall.entity.response.BaseResponse;
 import com.yjz.springboot.vue.tmall.entity.response.DataResponse;
 import com.yjz.springboot.vue.tmall.pojo.Category;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -14,7 +17,7 @@ import java.util.List;
 public interface CategoryService {
     DataResponse findAll(DataResponse response);
 
-    BaseResponse addOne(Category category);
+    void addOne(MultipartFile file, String name, BaseResponse response);
 
-    BaseResponse deleteOne(Category category);
+    void deleteOne(CategoryRequest request, BaseResponse response);
 }

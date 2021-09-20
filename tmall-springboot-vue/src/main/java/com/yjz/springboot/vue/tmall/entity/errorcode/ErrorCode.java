@@ -19,9 +19,19 @@ public enum ErrorCode {
      *
      * 具体错误编号：
      * 001：分类管理查询数据库错误
+     * 002：新增分类错误
+     * 003：删除分类错误
+     * 004：修改分类错误
+     * 005：查询分类错误
+     * 006：存放分类图片错误
+     * 011：请求参数错误
      */
     SUCCESS("0000000", "success"),
-    ADMIN_DATABASE_ERROR("3001001", "get category list failed: database error");
+    ADMIN_DATABASE_ERROR("3001001", "get category list failed: database error"),
+    ADMIN_ADD_CATEGORY_ERROR("3001002", "add category failed"),
+    ADMIN_DELETE_CATEGORY_ERROR("3001003", "delete category failed"),
+    ADMIN_SAVE_CATEGORY_IMG_ERROR("3001006", "save category image failed, can not create file"),
+    ADMIN_PARAM_ERROR("3001011", "request param is error: %s");
 
     private final String code;
     private final String decs;

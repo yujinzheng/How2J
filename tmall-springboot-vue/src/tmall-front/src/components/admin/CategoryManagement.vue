@@ -2,80 +2,89 @@
   <div class="admin-content">
     <el-tag size="small" effect="dark">分类管理</el-tag>
     <el-table :data="categoryData.categoryList" border style="width: 100%">
-      <el-table-column label="分类ID" width="90" prop="categoryId">
+      <el-table-column label="分类ID" width="90" prop="id">
       </el-table-column>
-      <el-table-column label="图片" prop="imagePath">
-
+      <el-table-column label="图片">
+        <template #default="scope">
+          <img :src="scope.row.imagePath">
+        </template>
       </el-table-column>
       <el-table-column label="分类名称" width="180" prop="name">
       </el-table-column>
       <el-table-column label="属性管理" width="90">
-          <el-button size="mini" icon="el-icon-s-operation" type="primary"
-          ></el-button>
+        <el-button size="mini" icon="el-icon-s-operation" type="primary"
+        ></el-button>
       </el-table-column>
       <el-table-column label="产品管理" width="90">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)"
-          icon="el-icon-shopping-cart-2"
-          ></el-button
-          >
+        <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)"
+                   icon="el-icon-shopping-cart-2"
+        ></el-button
+        >
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button size="mini" type="primary" @click="handleEdit(scope.row)"
-          icon="el-icon-edit"
+                     icon="el-icon-edit"
           ></el-button
           >
           <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.row)"
+              @click="deleteCategory(scope.row)"
               icon="el-icon-delete">
-      </el-button
+          </el-button
           >
         </template>
       </el-table-column>
     </el-table>
     <div class="pages">
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="pageInfo.currentPage"
-      :page-sizes="pageInfo.pageSizes"
-      :page-size="pageInfo.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageInfo.total"
-    >
-    </el-pagination>
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageInfo.currentPage"
+          :page-sizes="pageInfo.pageSizes"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageInfo.total"
+      >
+      </el-pagination>
     </div>
 
     <div class="addCategory">
       <div class="panel-heading">新增分类</div>
       <el-form label-position="right" label-width="100px" style="margin-right: 10px">
         <el-form-item label="分类名称：" border>
-          <el-input></el-input>
+          <el-input v-model="categoryAddInfo.name"></el-input>
         </el-form-item>
         <el-form-item label="分类图片：">
           <el-upload
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              list-type="picture"
+              ref="categoryUpload"
+              action="tmall-vue/admin/category/add"
+              list-type="text"
               style="margin-right: 100px"
+              name="picture"
+              :data="categoryAddInfo"
+              :limit="1"
+              :auto-upload="false"
+              :on-success="uploadSuccess"
+              accept=".jpg,.png"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary">选取图片</el-button>
           </el-upload>
         </el-form-item>
-          <el-button id="submit" type="success">提交</el-button>
+        <el-button id="submit" type="success" @click="addCategory()">提交</el-button>
       </el-form>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity';
-import { getCategoryList, deleteCategory } from "../../api/admin";
-import { onMounted } from '@vue/runtime-core';
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Edit } from '@element-plus/icons'
+import {reactive, toRaw} from '@vue/reactivity';
+import {categoryListGet, categoryDelete, categoryAdd} from "../../api/admin";
+import { ref } from 'vue'
+import {onMounted} from '@vue/runtime-core';
+import {ElMessage, ElMessageBox} from 'element-plus'
+import {Edit} from '@element-plus/icons'
 
 export default {
   name: "CategoryManagement",
@@ -92,10 +101,14 @@ export default {
       'pageSize': 10,
       'pageSizes': [10, 50, 100]
     });
+    const categoryUpload = ref(null);
+    const categoryAddInfo = reactive({
+      name: ''
+    })
     const getCategories = () => {
-      getCategoryList(pageInfo.currentPage, pageInfo.pageSize).then((response) => {
-        if(response.code !== "0000000") {
-          ElMessage.error(response.decs)
+      categoryListGet(pageInfo.currentPage, pageInfo.pageSize).then((response) => {
+        if (response.code !== "0000000") {
+          ElMessage.error(response.desc)
           return;
         }
         const data = JSON.parse(response.data);
@@ -104,8 +117,24 @@ export default {
         categoryData.categoryList = data.categoryList
       })
     };
+    const addCategory = () => {
+      if (toRaw(categoryUpload.value.uploadFiles).length === 0) {
+        const data = {
+          'name': categoryAddInfo.name
+        }
+        categoryAdd(data);
+        categoryAddInfo.name = '';
+      } else {
+        categoryUpload.value.submit();
+      }
+      setTimeout(function () {getCategories(pageInfo.currentPage, pageInfo.pageSize)}, 50)
+    };
+    const uploadSuccess = () => {
+      categoryUpload.value.clearFiles();
+      categoryAddInfo.name = '';
+    }
     const handleSizeChange = (val) => {
-      pageInfo.pageSize=val;
+      pageInfo.pageSize = val;
       getCategories(pageInfo.currentPage, pageInfo.pageSize);
     };
     const handleCurrentChange = (val) => {
@@ -118,19 +147,28 @@ export default {
     const handleEdit = (index, row) => {
       console.log(index, row)
     };
-    const handleDelete = (row) => {
+    const deleteCategory = (row) => {
       ElMessageBox.confirm('此操作将删除该分类, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        })
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
           .then(() => {
-            deleteCategory(row);
-            handleCurrentChange(pageInfo.currentPage);
-            ElMessage({
-              type: 'success',
-              message: '删除成功!',
+            const data = {
+              id: row.id,
+              imagePath: row.imagePath
+            }
+            categoryDelete(data).then((response) => {
+              if (response.code !== "0000000") {
+                ElMessage.error(response.desc)
+              } else {
+                ElMessage({
+                  type: 'success',
+                  message: '删除成功!',
+                });
+              }
             });
+            setTimeout(function () {getCategories(pageInfo.currentPage, pageInfo.pageSize)}, 50)
           })
           .catch(() => {
             ElMessage({
@@ -144,10 +182,14 @@ export default {
       categoryData,
       getCategories,
       handleEdit,
-      handleDelete,
+      deleteCategory,
       pageInfo,
       handleSizeChange,
-      handleCurrentChange
+      handleCurrentChange,
+      addCategory,
+      categoryUpload,
+      categoryAddInfo,
+      uploadSuccess
     }
   }
 }
