@@ -20,4 +20,6 @@ public interface CategoryService {
     void addOne(MultipartFile file, String name, BaseResponse response);
 
     void deleteOne(CategoryRequest request, BaseResponse response);
+
+    void updateOne(MultipartFile file, Category category, BaseResponse response);
 }

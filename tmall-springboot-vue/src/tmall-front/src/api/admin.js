@@ -4,6 +4,7 @@ import da from "element-plus/packages/locale/lang/da";
 const getCategoryListUrl = '/tmall-vue/admin/category/list'
 const addCategoryUrl = '/tmall-vue/admin/category/add'
 const deleteCategoryUrl = '/tmall-vue/admin/category/delete'
+const updateCategoryUrl = '/tmall-vue/admin/category/update'
 
 // 添加一个拦截器，回调函数会在发出请求时执行
 // config: 请求配置
@@ -53,4 +54,17 @@ function categoryDelete(data={}) {
     })
 }
 
-export {categoryListGet, categoryAdd, categoryDelete}
+function categoryUpdate(data={}) {
+    const requestData = new FormData()
+    requestData.append('category', JSON.stringify(data));
+    return axios({
+        url: updateCategoryUrl,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+        data: requestData
+    })
+}
+
+export {categoryListGet, categoryAdd, categoryDelete, categoryUpdate}

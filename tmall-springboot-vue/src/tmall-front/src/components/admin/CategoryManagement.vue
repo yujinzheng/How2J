@@ -75,13 +75,46 @@
         <el-button id="submit" type="success" @click="addCategory()">提交</el-button>
       </el-form>
     </div>
+    <div class="update dialog">
+      <el-dialog title="编辑分类" v-model="editFormVisible">
+        <el-form label-position="right" label-width="100px" style="margin-right: 10px">
+          <el-form-item label="分类名称：" border>
+            <el-input v-model="categoryEditInfo.name"></el-input>
+          </el-form-item>
+          <el-form-item label="分类图片：">
+            <el-upload
+                ref="categoryUpdateUpload"
+                action="tmall-vue/admin/category/update"
+                list-type="text"
+                style="margin-right: 100px"
+                name="picture"
+                :data="{'category': JSON.stringify(categoryEditInfo)}"
+                :limit="1"
+                :auto-upload="false"
+                :on-success="updateUploadSuccess"
+                accept=".jpg,.png"
+            >
+              <el-button size="small" type="primary">选取图片</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="editFormVisible = false">取 消</el-button>
+            <el-button id="update" type="success" @click="updateCategory"
+            >确 定</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
-import {reactive, toRaw} from '@vue/reactivity';
-import {categoryListGet, categoryDelete, categoryAdd} from "../../api/admin";
-import { ref } from 'vue'
+import {reactive, toRaw, toRefs} from '@vue/reactivity';
+import {categoryListGet, categoryDelete, categoryAdd, categoryUpdate} from "../../api/admin";
+import {ref} from 'vue'
 import {onMounted} from '@vue/runtime-core';
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {Edit} from '@element-plus/icons'
@@ -102,8 +135,17 @@ export default {
       'pageSizes': [10, 50, 100]
     });
     const categoryUpload = ref(null);
+    const categoryUpdateUpload = ref(null);
     const categoryAddInfo = reactive({
       name: ''
+    })
+    const state = reactive({
+      editFormVisible: false
+    })
+    const categoryEditInfo = reactive({
+      id: '',
+      name: '',
+      imagePath: ''
     })
     const getCategories = () => {
       categoryListGet(pageInfo.currentPage, pageInfo.pageSize).then((response) => {
@@ -127,12 +169,35 @@ export default {
       } else {
         categoryUpload.value.submit();
       }
-      setTimeout(function () {getCategories(pageInfo.currentPage, pageInfo.pageSize)}, 50)
+      setTimeout(function () {
+        getCategories(pageInfo.currentPage, pageInfo.pageSize)
+      }, 50)
     };
     const uploadSuccess = () => {
       categoryUpload.value.clearFiles();
       categoryAddInfo.name = '';
-    }
+    };
+    const updateUploadSuccess = () => {
+      categoryUpdateUpload.value.clearFiles();
+      categoryEditInfo.name = '';
+    };
+    const updateCategory = () => {
+      if (toRaw(categoryUpdateUpload.value.uploadFiles).length === 0) {
+        const data = {
+          'name': categoryEditInfo.name,
+          'id': categoryEditInfo.id,
+          'imagePath': categoryEditInfo.imagePath
+        }
+        categoryUpdate(data);
+        categoryEditInfo.name = '';
+      } else {
+        categoryUpdateUpload.value.submit();
+      }
+      state.editFormVisible = false;
+      setTimeout(function () {
+        getCategories(pageInfo.currentPage, pageInfo.pageSize)
+      }, 150)
+    };
     const handleSizeChange = (val) => {
       pageInfo.pageSize = val;
       getCategories(pageInfo.currentPage, pageInfo.pageSize);
@@ -144,8 +209,11 @@ export default {
     onMounted(() => {
       getCategories(pageInfo.currentPage, pageInfo.pageSize);
     });
-    const handleEdit = (index, row) => {
-      console.log(index, row)
+    const handleEdit = (row) => {
+      state.editFormVisible = true;
+      categoryEditInfo.name = row.name;
+      categoryEditInfo.id = row.id;
+      categoryEditInfo.imagePath = row.imagePath;
     };
     const deleteCategory = (row) => {
       ElMessageBox.confirm('此操作将删除该分类, 是否继续?', '提示', {
@@ -168,7 +236,9 @@ export default {
                 });
               }
             });
-            setTimeout(function () {getCategories(pageInfo.currentPage, pageInfo.pageSize)}, 50)
+            setTimeout(function () {
+              getCategories(pageInfo.currentPage, pageInfo.pageSize)
+            }, 50)
           })
           .catch(() => {
             ElMessage({
@@ -188,8 +258,13 @@ export default {
       handleCurrentChange,
       addCategory,
       categoryUpload,
+      categoryUpdateUpload,
       categoryAddInfo,
-      uploadSuccess
+      uploadSuccess,
+      updateUploadSuccess,
+      ...toRefs(state),
+      categoryEditInfo,
+      updateCategory
     }
   }
 }

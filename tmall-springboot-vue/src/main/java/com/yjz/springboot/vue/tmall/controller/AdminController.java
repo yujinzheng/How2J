@@ -1,10 +1,14 @@
 
 package com.yjz.springboot.vue.tmall.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.github.pagehelper.PageHelper;
+import com.yjz.springboot.vue.tmall.entity.errorcode.ErrorCode;
 import com.yjz.springboot.vue.tmall.entity.request.CategoryRequest;
 import com.yjz.springboot.vue.tmall.entity.response.BaseResponse;
 import com.yjz.springboot.vue.tmall.entity.response.DataResponse;
+import com.yjz.springboot.vue.tmall.pojo.Category;
 import com.yjz.springboot.vue.tmall.service.CategoryService;
 import com.yjz.springboot.vue.tmall.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +37,8 @@ public class AdminController {
     }
 
     @RequestMapping("/category/add")
-    public BaseResponse addOne(@RequestPart(value = "picture", required = false) MultipartFile picture, @RequestPart("name") String name) {
+    public BaseResponse addOne(@RequestPart(value = "picture", required = false) MultipartFile picture,
+        @RequestPart("name") String name) {
         BaseResponse response = ResponseUtils.success();
         categoryService.addOne(picture, name, response);
         return response;
@@ -43,6 +48,20 @@ public class AdminController {
     public BaseResponse deleteOne(@RequestBody CategoryRequest request) {
         BaseResponse response = ResponseUtils.success();
         categoryService.deleteOne(request, response);
+        return response;
+    }
+
+    @RequestMapping("/category/update")
+    public BaseResponse updateOne(@RequestParam(value = "picture", required = false) MultipartFile picture,
+        @RequestParam(value = "category") String categoryStr) {
+        BaseResponse response = ResponseUtils.success();
+        Category category = JSONObject.parseObject(categoryStr, Category.class);
+        if (category == null) {
+            response.setCode(ErrorCode.ADMIN_PARAM_ERROR.getCode());
+            response.setDesc(String.format(ErrorCode.ADMIN_PARAM_ERROR.getDecs(),"request.category"));
+            return response;
+        }
+        categoryService.updateOne(picture, category, response);
         return response;
     }
 }

@@ -66,32 +66,11 @@ public class CategoryServiceImpl implements CategoryService {
         String originalFileName = file.getOriginalFilename();
         String extensionName = originalFileName.substring(originalFileName.lastIndexOf("."));
         String filePath = IMG_DIR + File.separator + id + extensionName;
-        File imgFile = new File(filePath);
-        try {
-            if (!imgFile.exists()) {
-                if (!imgFile.createNewFile()) {
-                    throw new IOException();
-                }
-            }
-        } catch (IOException e) {
-            response.setCode(ErrorCode.ADMIN_SAVE_CATEGORY_IMG_ERROR.getCode());
-            response.setCode(ErrorCode.ADMIN_SAVE_CATEGORY_IMG_ERROR.getDecs());
+        if(!saveFile(file, filePath, response)) {
             return;
         }
-        try(InputStream inputStream = file.getInputStream();
-            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(imgFile))) {
-            byte[] buffer = new byte[BUFFER];
-            int length = inputStream.read(buffer, 0, BUFFER);
-            while (length != -1) {
-                outputStream.write(buffer, 0, BUFFER);
-                length = inputStream.read(buffer, 0, BUFFER);
-            }
-            category.setImagePath("\\category\\" + id + extensionName);
-            categoryMapper.updateCategory(category);
-        } catch (IOException e) {
-            response.setCode(ErrorCode.ADMIN_ADD_CATEGORY_ERROR.getCode());
-            response.setCode(ErrorCode.ADMIN_ADD_CATEGORY_ERROR.getDecs());
-        }
+        category.setImagePath("\\category\\" + id + extensionName);
+        categoryMapper.updateCategory(category);
     }
 
     @Override
@@ -113,5 +92,75 @@ public class CategoryServiceImpl implements CategoryService {
             response.setCode(ErrorCode.ADMIN_PARAM_ERROR.getCode());
             response.setDesc(String.format(ErrorCode.ADMIN_PARAM_ERROR.getDecs(), "request.id"));
         }
+    }
+
+    @Override
+    public void updateOne(MultipartFile file, Category category, BaseResponse response) {
+        int id;
+        try {
+            id = category.getId();
+        } catch (NumberFormatException e) {
+            response.setCode(ErrorCode.ADMIN_PARAM_ERROR.getCode());
+            response.setDesc(String.format(ErrorCode.ADMIN_PARAM_ERROR.getDecs(), "request.category.id"));
+            return;
+        }
+        String name = category.getName();
+        String imagePath = category.getImagePath();
+        if (name.isEmpty()) {
+            response.setCode(ErrorCode.ADMIN_PARAM_ERROR.getCode());
+            response.setCode(String.format(ErrorCode.ADMIN_PARAM_ERROR.getDecs(), "request.name"));
+            return;
+        }
+
+        if (file != null) {
+            String originalFileName = file.getOriginalFilename();
+            String extensionName = originalFileName.substring(originalFileName.lastIndexOf("."));
+            String filePath = IMG_DIR + File.separator + id + extensionName;
+            if (!saveFile(file, filePath, response)) {
+                return;
+            }
+            category.setImagePath("\\category\\" + id + extensionName);
+        } else {
+            if (imagePath != null && !imagePath.isEmpty()) {
+                imagePath = imagePath.replace("category", IMG_DIR);
+                File currentFile = new File(imagePath);
+                if (currentFile.exists() && !currentFile.delete()) {
+                    response.setCode(ErrorCode.ADMIN_DELETE_CATEGORY_ERROR.getCode());
+                    response.setDesc(ErrorCode.ADMIN_DELETE_CATEGORY_ERROR.getDecs());
+                    return;
+                }
+            }
+            category.setImagePath("");
+        }
+        categoryMapper.updateCategory(category);
+    }
+
+    private boolean saveFile(MultipartFile file, String filePath, BaseResponse response) {
+        File imgFile = new File(filePath);
+        try {
+            if (!imgFile.exists()) {
+                if (!imgFile.createNewFile()) {
+                    throw new IOException();
+                }
+            }
+        } catch (IOException e) {
+            response.setCode(ErrorCode.ADMIN_SAVE_CATEGORY_IMG_ERROR.getCode());
+            response.setCode(ErrorCode.ADMIN_SAVE_CATEGORY_IMG_ERROR.getDecs());
+            return false;
+        }
+        try(InputStream inputStream = file.getInputStream();
+            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(imgFile))) {
+            byte[] buffer = new byte[BUFFER];
+            int length = inputStream.read(buffer, 0, BUFFER);
+            while (length != -1) {
+                outputStream.write(buffer, 0, BUFFER);
+                length = inputStream.read(buffer, 0, BUFFER);
+            }
+        } catch (IOException e) {
+            response.setCode(ErrorCode.ADMIN_ADD_CATEGORY_ERROR.getCode());
+            response.setCode(ErrorCode.ADMIN_ADD_CATEGORY_ERROR.getDecs());
+            return false;
+        }
+        return true;
     }
 }
